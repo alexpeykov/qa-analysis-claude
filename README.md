@@ -1,0 +1,281 @@
+# QA Analysis Claude Skill
+
+A Claude skill for Quality Assurance specialists to interact with Jira, GitLab, and Confluence.
+
+## Setup Instructions
+
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd qa-analysis-claude
+```
+
+### 2. Configure Your Credentials
+
+**IMPORTANT: Never commit your `.env` file to the repository!**
+
+1. Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit `.env` and add your personal credentials:
+   ```bash
+   nano .env
+   # or use your preferred editor
+   ```
+
+3. Replace the placeholder values with your actual credentials:
+   - **Jira**: Your Paysera email and Jira API token
+   - **GitLab**: Your Paysera email, personal access token, and feed token
+   - **Confluence**: Your Paysera email and Confluence API token
+
+### 3. Getting Your API Tokens
+
+#### Jira API Token
+1. Go to [https://jira.paysera.net/](https://jira.paysera.net/)
+2. Click on your profile → Account Settings → Security
+3. Create a new API token
+
+#### GitLab Personal Access Token
+1. Go to [https://gitlab.paysera.net/](https://gitlab.paysera.net/)
+2. Click on your profile → Preferences → Access Tokens
+3. Create a new token with appropriate scopes (api, read_user, read_repository)
+
+#### GitLab Feed Token
+1. Go to [https://gitlab.paysera.net/](https://gitlab.paysera.net/)
+2. Click on your profile → Preferences → Access Tokens
+3. Your feed token is displayed under "Feed token"
+
+#### Confluence API Token
+1. Go to [https://intranet.paysera.net/](https://intranet.paysera.net/)
+2. Click on your profile → Account Settings → Security
+3. Create a new API token
+
+## Security Notes
+
+- ✅ The `.env` file is listed in `.gitignore` and will NOT be committed
+- ✅ Use `.env.example` as a template (no real credentials)
+- ✅ Each team member must create their own `.env` file
+- ⚠️ Never share your API tokens in chat, email, or commits
+- ⚠️ If a token is accidentally exposed, revoke it immediately and create a new one
+
+## Installation
+
+### 4. Install Python Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+This will install:
+- `requests` - For making API calls to Jira, GitLab, and Confluence
+- `python-dotenv` - For loading environment variables from .env file
+
+## Project Structure
+
+```
+qa-analysis-claude/
+├── .env                      # Your personal credentials (NOT in git)
+├── .env.example              # Template for credentials (committed to git)
+├── .gitignore               # Ensures .env is not committed
+├── README.md                # This file
+├── SECURITY.md              # Security guidelines
+├── requirements.txt         # Python dependencies
+├── qa_analyze.py            # Main execution script
+├── .claude/
+│   └── qa-analysis.md       # Claude prompt template
+└── src/
+    ├── __init__.py
+    ├── config.py            # Configuration and credential loading
+    ├── jira_client.py       # Jira API client
+    ├── gitlab_client.py     # GitLab API client
+    ├── confluence_client.py # Confluence API client
+    └── analyzer.py          # Main analysis orchestrator
+```
+
+## Usage
+
+### Quick Start
+
+Run the QA analysis tool with a Jira ticket:
+
+```bash
+python qa_analyze.py --jira https://jira.paysera.net/browse/PROJ-123
+```
+
+### Full Analysis with All Sources
+
+```bash
+python qa_analyze.py \
+  --jira https://jira.paysera.net/browse/PROJ-123 \
+  --linked https://jira.paysera.net/browse/PROJ-124 \
+           https://jira.paysera.net/browse/PROJ-125 \
+  --mr https://gitlab.paysera.net/project/-/merge_requests/456 \
+       https://gitlab.paysera.net/project/-/merge_requests/457 \
+  --confluence https://intranet.paysera.net/pages/viewpage.action?pageId=789
+```
+
+### Command Line Options
+
+- `--jira URL` (required): URL to the main Jira ticket
+- `--linked URL [URL ...]`: URLs to linked Jira tickets (optional, multiple allowed)
+- `--mr URL [URL ...]`: URLs to GitLab merge requests (optional, multiple allowed)
+- `--confluence URL [URL ...]`: URLs to Confluence pages (optional, multiple allowed)
+- `--output FILE` or `-o FILE`: Save output to file instead of printing to console
+- `--format {text,json}`: Output format (default: text)
+  - `text`: Generates a Claude-ready prompt with all data
+  - `json`: Raw JSON data for programmatic processing
+
+### Examples
+
+#### Example 1: Basic ticket analysis
+```bash
+python qa_analyze.py --jira https://jira.paysera.net/browse/PROJ-123
+```
+
+#### Example 2: Ticket with merge request
+```bash
+python qa_analyze.py \
+  --jira https://jira.paysera.net/browse/PROJ-123 \
+  --mr https://gitlab.paysera.net/project/-/merge_requests/456
+```
+
+#### Example 3: Full analysis saved to file
+```bash
+python qa_analyze.py \
+  --jira https://jira.paysera.net/browse/PROJ-123 \
+  --linked https://jira.paysera.net/browse/PROJ-124 \
+  --mr https://gitlab.paysera.net/project/-/merge_requests/456 \
+  --confluence https://intranet.paysera.net/pages/viewpage.action?pageId=789 \
+  --output analysis_prompt.txt
+```
+
+#### Example 4: Get raw JSON data
+```bash
+python qa_analyze.py \
+  --jira https://jira.paysera.net/browse/PROJ-123 \
+  --format json \
+  --output data.json
+```
+
+### Workflow
+
+1. **Run the analysis script** with your ticket URLs
+2. **Review the generated prompt** (printed to console or saved to file)
+3. **Copy the prompt to Claude** (Claude Code, claude.ai, or API)
+4. **Receive comprehensive QA analysis** including:
+   - Executive summary of the ticket and changes
+   - 10-15 creative test ideas
+   - 8-12 detailed test cases with steps and acceptance criteria
+
+### What You Get
+
+The tool generates a comprehensive prompt for Claude that includes:
+
+#### From Jira:
+- Ticket summary, description, status, priority
+- All comments and discussions
+- Linked tickets and their relationships
+- Ticket metadata (assignee, reporter, dates)
+
+#### From GitLab:
+- Merge request description and status
+- All code changes and diffs
+- Commit history
+- Code review discussions and comments
+- Files modified/added/deleted
+
+#### From Confluence:
+- Documentation content
+- Page metadata and version history
+- Comments and discussions
+
+#### Claude's Analysis Output:
+1. **Executive Summary**: Overview of the ticket, changes, and impact
+2. **Test Ideas**: 10-15 creative test scenarios covering functional, edge cases, integration, security, performance, etc.
+3. **Detailed Test Cases**: 8-12 comprehensive test cases with:
+   - Test case ID and title
+   - Priority level
+   - Preconditions
+   - Step-by-step test instructions
+   - Test data
+   - Expected results
+   - Acceptance criteria
+
+## Advanced Usage
+
+### Using as a Python Module
+
+You can also import and use the components in your own Python scripts:
+
+```python
+from src.analyzer import QAAnalyzer
+
+analyzer = QAAnalyzer()
+
+# Fetch data
+data = analyzer.fetch_all_data(
+    jira_ticket_url="https://jira.paysera.net/browse/PROJ-123",
+    merge_request_urls=["https://gitlab.paysera.net/project/-/merge_requests/456"]
+)
+
+# Format for analysis
+formatted_text = analyzer.format_data_for_analysis(data)
+print(formatted_text)
+```
+
+### Integration with CI/CD
+
+You can integrate this tool into your CI/CD pipeline:
+
+```yaml
+# Example GitLab CI configuration
+qa-analysis:
+  script:
+    - pip install -r requirements.txt
+    - python qa_analyze.py --jira $JIRA_TICKET_URL --mr $CI_MERGE_REQUEST_URL --output analysis.txt
+  artifacts:
+    paths:
+      - analysis.txt
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**Error: Missing required configuration values**
+- Ensure your `.env` file exists and contains all required values
+- Check that you copied `.env.example` to `.env` and filled in your credentials
+
+**Error: Could not extract ticket key/MR info from URL**
+- Verify the URL format is correct
+- Ensure you're using full URLs, not just ticket keys
+- For Confluence, make sure the URL contains `pageId=` parameter
+
+**Error: Authentication failed**
+- Verify your API tokens are correct and not expired
+- Check that you're using the right email address
+- Try generating new API tokens
+
+**Error: Permission denied**
+- Ensure your account has access to the Jira ticket, GitLab project, or Confluence page
+- Contact your admin if you need additional permissions
+
+### Getting Help
+
+- Check [SECURITY.md](SECURITY.md) for credential management issues
+- Review the error messages for specific guidance
+- Contact your team lead for access or permission issues
+
+## Contributing
+
+When contributing to this project:
+1. Never commit your `.env` file
+2. Update `.env.example` if you add new environment variables (without real values)
+3. Update this README with any setup changes
+
+## Support
+
+For issues with credentials or access, contact your team lead or IT support.
