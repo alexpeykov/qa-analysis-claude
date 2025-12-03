@@ -276,6 +276,148 @@ When contributing to this project:
 2. Update `.env.example` if you add new environment variables (without real values)
 3. Update this README with any setup changes
 
+## TestRail Integration
+
+This project includes tools for managing TestRail test cases and folders.
+
+### Creating TestRail Folders
+
+Create folders/sections in TestRail for organizing test cases:
+
+```bash
+python3 create_testrail_folder.py \
+  --project 2 \
+  --suite 14 \
+  --folder "CORE-5567 - Feature Name" \
+  --description "https://jira.paysera.net/browse/CORE-5567"
+```
+
+**Options:**
+- `--project`: TestRail project ID (required)
+- `--suite`: TestRail suite ID (required for multi-suite projects)
+- `--folder`: Folder name (required)
+- `--description`: Optional folder description
+
+### Creating Test Cases
+
+#### Method 1: From Natural Text Input (Recommended)
+
+Create test cases from text with automatic expected result generation:
+
+```bash
+python3 create_test_case_from_text.py \
+  --project 2 \
+  --suite 14 \
+  --section-id 90046 \
+  --type "Functional" \
+  --priority "High" \
+  --refs "CORE-5567" \
+  --input "Load DB fixtures from test plan
+1.Switch to local DB
+2.Load the fixtures from the test plan
+3.Examine the output
+The fixtures are supposed to be imported without any errors. The info is supposed to be present in the DB tables."
+```
+
+The script will automatically generate appropriate expected results for each step based on the action described.
+
+#### Method 2: Explicit Steps and Expected Results
+
+Create test cases by explicitly specifying steps and their expected results:
+
+```bash
+python3 create_test_cases.py \
+  --project 2 \
+  --suite 14 \
+  --section-id 90046 \
+  --type "Functional" \
+  --priority "High" \
+  --title "Load DB fixtures from test plan" \
+  --refs "CORE-5567" \
+  --steps "Switch to local DB" "Load the fixtures" "Examine output" \
+  --expected "Fixtures imported successfully" "Data present in DB" "Output verified"
+```
+
+**Options:**
+- `--project`: TestRail project ID (required)
+- `--suite`: TestRail suite ID
+- `--section-id`: TestRail section ID (required, use this OR --section-name)
+- `--section-name`: TestRail section name (will search for it)
+- `--type`: Test case type (default: Functional)
+- `--priority`: Test priority (default: Medium)
+- `--title`: Test case title (required)
+- `--refs`: References like Jira ticket IDs
+- `--steps`: Test steps (space-separated)
+- `--expected`: Expected results for each step (must match number of steps)
+- `--estimate`: Time estimate (e.g., "30s", "1m", "2h")
+- `--preconditions`: Preconditions for the test
+
+**Example: Create multiple test cases with text input**
+
+```bash
+# Test Case 1
+python3 create_test_case_from_text.py --project 2 --suite 14 --section-id 90046 \
+  --type "Functional" --priority "High" --refs "CORE-5567" \
+  --input "Process transfer 9990001 with command from test plan
+1.Enter evpbank container via terminal
+2.Execute the command app/console paysera:debug:intermediate-statement 99990001
+3.Examine the output
+The command is supposed to be executed without any errors. Statement is supposed to be created"
+
+# Test Case 2
+python3 create_test_case_from_text.py --project 2 --suite 14 --section-id 90046 \
+  --type "Functional" --priority "High" --refs "CORE-5567" \
+  --input "Process transfer 9990002 with command from test plan
+1.Enter evpbank container via terminal
+2.Execute the command app/console paysera:debug:intermediate-statement 99990002
+3.Examine the output
+The command is supposed to be executed without any errors. Statement is supposed to be created"
+```
+
+### Creating Test Runs
+
+Create test runs that include test cases from specified folders:
+
+```bash
+python3 create_test_run.py \
+  --project 2 \
+  --suite 14 \
+  --name "CORE-5567 - Test Run" \
+  --refs "CORE-5567" \
+  --description "Testing CORE-5567 functionality" \
+  --folders "5567 - Add persisted events for TransferStatusForReservationStatementListener"
+```
+
+**Options:**
+- `--project`: TestRail project ID (required)
+- `--suite`: TestRail suite ID (required)
+- `--name`: Test run name (required)
+- `--refs`: References like Jira ticket IDs
+- `--description`: Test run description
+- `--folders`: Folder/section names to include test cases from (space-separated, required)
+
+**Example: Create test run from multiple folders**
+
+```bash
+python3 create_test_run.py \
+  --project 2 \
+  --suite 14 \
+  --name "Sprint 42 - Regression Test Run" \
+  --refs "SPRINT-42" \
+  --description "Full regression testing for Sprint 42" \
+  --folders "5567 - Feature A" "5568 - Feature B" "5569 - Feature C"
+```
+
+### TestRail Workflow
+
+1. **Create a folder** for your Jira ticket
+2. **Note the section ID** from the output
+3. **Create test cases** in that section
+4. **Create a test run** including test cases from the folder(s)
+5. **Verify in TestRail** using the provided URLs
+
+See [prompts/create_testrail_folder.md](prompts/create_testrail_folder.md), [prompts/create_test_cases.md](prompts/create_test_cases.md), and [prompts/create_test_run.md](prompts/create_test_run.md) for detailed templates.
+
 ## Support
 
 For issues with credentials or access, contact your team lead or IT support.
