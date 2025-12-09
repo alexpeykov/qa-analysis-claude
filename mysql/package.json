@@ -1,0 +1,21 @@
+{
+  "name": "mcp-mysql-wrapper",
+  "version": "1.0.0",
+  "description": "MySQL MCP server wrapper",
+  "main": "build/index.js",
+  "type": "module",
+  "bin": {
+    "mcp-mysql": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.18.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.17",
+    "typescript": "^5.7.3"
+  }
+}
