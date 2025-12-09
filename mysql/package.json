@@ -12,7 +12,8 @@
     "start": "node build/index.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.18.2"
+    "@modelcontextprotocol/sdk": "^1.18.2",
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
     "@types/node": "^20.19.17",

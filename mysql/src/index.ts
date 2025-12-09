@@ -12,6 +12,7 @@ import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import fs from 'fs';
+import dotenv from 'dotenv';
 
 interface MySQLConfig {
   connections: Array<{
@@ -25,7 +26,49 @@ interface MySQLConfig {
   }>;
 }
 
-// Load configuration from config.json file
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Load environment variables from .env file
+const envPath = join(__dirname, '..', '..', '.env');
+dotenv.config({ path: envPath });
+
+// Build configuration from environment variables
+const buildConfigFromEnv = (): MySQLConfig => {
+  const connections: MySQLConfig['connections'] = [];
+
+  // Helper function to add connection if all required fields are present
+  const addConnection = (id: string, name: string, prefix: string) => {
+    const host = process.env[`${prefix}_HOST`];
+    const port = process.env[`${prefix}_PORT`];
+    const database = process.env[`${prefix}_DATABASE`];
+    const username = process.env[`${prefix}_USER`];
+    const password = process.env[`${prefix}_PASSWORD`];
+
+    if (host && port && database && username && password) {
+      connections.push({
+        id,
+        name,
+        host,
+        port: parseInt(port, 10),
+        database,
+        username,
+        password
+      });
+    }
+  };
+
+  // Add all configured connections
+  addConnection('default', 'Default MySQL', 'MYSQL');
+  addConnection('evpbank-local', 'EVPBank Local', 'EVPBANK_LOCAL');
+  addConnection('evpbank-remote', 'EVPBank Remote', 'EVPBANK_REMOTE');
+  addConnection('mokejimai-local', 'Mokejimai Local', 'MOKEJIMAI_LOCAL');
+  addConnection('mokejimai-remote', 'Mokejimai Remote', 'MOKEJIMAI_REMOTE');
+
+  return { connections };
+};
+
+// Load configuration from config.json file (fallback)
 const loadConfig = (configPath: string): MySQLConfig | null => {
   if (fs.existsSync(configPath)) {
     try {
@@ -40,12 +83,15 @@ const loadConfig = (configPath: string): MySQLConfig | null => {
   return null;
 };
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Load configuration from config.json file
+// Try to load from config.json first, then fall back to environment variables
 const configPath = join(__dirname, '..', 'config.json');
-const config = loadConfig(configPath);
+let config = loadConfig(configPath);
+
+// If no config.json, build from environment variables
+if (!config || !config.connections || config.connections.length === 0) {
+  console.error('[MySQL MCP Wrapper] No config.json found, loading from environment variables...');
+  config = buildConfigFromEnv();
+}
 
 // Path to the upstream MySQL MCP server
 const upstreamPath = join(__dirname, '..', 'upstream', 'build', 'index.js');
@@ -66,18 +112,32 @@ if (!config || !config.connections || config.connections.length === 0) {
   process.exit(1);
 }
 
-// Use the first connection from config
-// TODO: In future, we could implement a tool to switch between connections
+// Select connection based on MYSQL_CONNECTION_ID environment variable, or use first connection
 if (config && config.connections && config.connections.length > 0) {
-  const firstConn = config.connections[0];
+  const selectedConnectionId = process.env.MYSQL_CONNECTION_ID;
+  let selectedConn = config.connections[0];
+
+  // If a specific connection ID is requested, try to find it
+  if (selectedConnectionId) {
+    const found = config.connections.find(conn => conn.id === selectedConnectionId);
+    if (found) {
+      selectedConn = found;
+      console.error(`[MySQL MCP Wrapper] Selected connection by ID: ${selectedConnectionId}`);
+    } else {
+      console.error(`[MySQL MCP Wrapper] Warning: Connection ID '${selectedConnectionId}' not found, using first connection`);
+    }
+  }
 
   // Log which connection is being used (without password)
-  console.error(`[MySQL MCP Wrapper] Using READ-ONLY connection: ${firstConn.name} (${firstConn.username}@${firstConn.host}:${firstConn.port}/${firstConn.database})`);
+  console.error(`[MySQL MCP Wrapper] Using READ-ONLY connection: ${selectedConn.name} (${selectedConn.username}@${selectedConn.host}:${selectedConn.port}/${selectedConn.database})`);
 
   if (config.connections.length > 1) {
     console.error(`[MySQL MCP Wrapper] Note: ${config.connections.length - 1} additional connection(s) configured but not active`);
-    console.error(`[MySQL MCP Wrapper] Currently using first connection: ${firstConn.name}`);
+    console.error(`[MySQL MCP Wrapper] Available connections: ${config.connections.map(c => c.id).join(', ')}`);
+    console.error(`[MySQL MCP Wrapper] Set MYSQL_CONNECTION_ID environment variable to switch connections`);
   }
+
+  const firstConn = selectedConn;
 
   // Prepare environment variables for dpflucas/mysql-mcp-server
   // It expects MYSQL_* environment variables
