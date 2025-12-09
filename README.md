@@ -418,6 +418,147 @@ python3 create_test_run.py \
 
 See [prompts/create_testrail_folder.md](prompts/create_testrail_folder.md), [prompts/create_test_cases.md](prompts/create_test_cases.md), and [prompts/create_test_run.md](prompts/create_test_run.md) for detailed templates.
 
+## MySQL Database Query Tools
+
+This project includes tools for querying MySQL databases across multiple environments.
+
+### Quick Start
+
+**Query any database:**
+```bash
+./mysql/query-remote.sh "SELECT * FROM table_name WHERE condition"
+```
+
+**Switch databases instantly:**
+```bash
+./mysql/switch-db.sh er   # EVPBank Remote
+./mysql/switch-db.sh el   # EVPBank Local
+./mysql/switch-db.sh mr   # Mokejimai Remote
+./mysql/switch-db.sh ml   # Mokejimai Local
+```
+
+**Test all connections:**
+```bash
+./mysql/test-all-connections.sh
+```
+
+### Available Databases
+
+| Shortcut | Connection | Host | Database | Description |
+|----------|------------|------|----------|-------------|
+| er | evpbank-remote | evpbank.dev.lan:7450 | gateway | Production EVPBank data |
+| el | evpbank-local | evpbank.dev.docker:3306 | gateway | Local EVPBank Docker |
+| mr | mokejimai-remote | evp-lt.dev.lan:7550 | evp_lt | Production Mokejimai data |
+| ml | mokejimai-local | mokejimai.dev.docker:3306 | evp_lt | Local Mokejimai Docker |
+
+### Common Workflows
+
+```bash
+# Show all tables in current database
+./mysql/query-remote.sh "SHOW TABLES"
+
+# Query with vertical output (better for wide tables)
+./mysql/query-remote.sh "SELECT * FROM client WHERE id = 42\G"
+
+# Count records
+./mysql/query-remote.sh "SELECT COUNT(*) FROM client"
+
+# Check table structure
+./mysql/query-remote.sh "DESCRIBE client"
+
+# Switch and query in one line
+./mysql/switch-db.sh er && ./mysql/query-remote.sh "SELECT * FROM client LIMIT 5"
+
+# Interactive database switcher (shows menu)
+./mysql/switch-db.sh
+```
+
+### How It Works
+
+The query system:
+1. Loads database credentials from `.env` file
+2. Selects the correct connection based on `MYSQL_CONNECTION_ID`
+3. Executes queries through the `mariadb` Docker container
+4. Works reliably because Docker containers run on the Ubuntu remote host with direct network access
+
+### Configuration
+
+Database connections are configured in the `.env` file. The active connection is controlled by `MYSQL_CONNECTION_ID`:
+
+```bash
+# Set in .env file
+MYSQL_CONNECTION_ID=evpbank-remote  # Current active database
+```
+
+Use the switch script to change databases quickly, or edit `.env` manually.
+
+### Documentation
+
+- **Full Documentation**: [mysql/README.md](mysql/README.md)
+- **Quick Reference**: [mysql/QUICK_REFERENCE.md](mysql/QUICK_REFERENCE.md)
+
+## Docker Environment
+
+This project runs in a Docker-based development environment on a remote Ubuntu host.
+
+### Docker Containers
+
+The environment includes 43+ running containers:
+
+**Databases:**
+- `mariadb` - MySQL/MariaDB database server (used by query tools)
+- `postgres` - PostgreSQL database
+- `redis-cluster` - Redis cache cluster
+
+**Applications:**
+- `evpbank` - EVPBank application
+- `mokejimai` - Mokejimai application
+
+**Infrastructure:**
+- `traefik` - Reverse proxy (exposes ports 80, 443, 3306, 5432, etc.)
+- `rabbitmq` - Message broker
+- `keycloak` - Authentication/SSO
+- `mailhog` - Email testing
+
+**APIs & Services:**
+- Multiple API containers (auth, wallet, accounting, banking, etc.)
+- Multiple frontend containers (paysera, loans, partner, etc.)
+
+### Accessing Docker
+
+All Docker commands automatically connect to the remote Ubuntu host via:
+
+```bash
+# Set in .env
+DOCKER_HOST=unix:///tmp/remote-docker-on-ubuntu.sock
+```
+
+**List all containers:**
+```bash
+docker ps
+```
+
+**Execute commands in containers:**
+```bash
+# Access EVPBank container
+docker exec -it evpbank bash
+
+# Access Mokejimai container
+docker exec -it mokejimai bash
+
+# Query database directly
+docker exec mariadb mysql -h evpbank.dev.docker -u app -ppass gateway -e "SHOW TABLES"
+```
+
+### Network Access
+
+The Docker containers run on the remote Ubuntu host, which has:
+- Direct network access to `evpbank.dev.lan` and `evp-lt.dev.lan`
+- No SSH tunnel required when running from Docker containers
+- Reliable connectivity to remote databases
+
+This is why the MySQL query scripts use `docker exec mariadb` - it leverages the Docker container's network access.
+
 ## Support
 
 For issues with credentials or access, contact your team lead or IT support.

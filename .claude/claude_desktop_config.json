@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "mysql": {
+      "command": "node",
+      "args": [
+        "/Users/employee/Projects/qa-analysis-claude/mysql/build/index.js"
+      ],
+      "env": {
+        "CONFIG_PATH": "/Users/employee/Projects/qa-analysis-claude/mysql/config.json"
+      }
+    },
+    "docker": {
+      "command": "node",
+      "args": [
+        "/Users/employee/Projects/qa-analysis-claude/docker/build/index.js"
+      ],
+      "env": {
+        "CONFIG_PATH": "/Users/employee/Projects/qa-analysis-claude/docker/config.json"
+      }
+    }
+  }
+}
