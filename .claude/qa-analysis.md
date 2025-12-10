@@ -789,24 +789,41 @@ You MUST generate a beautiful, well-structured HTML report with the following fe
 
 ### When Analyzing Jira Tickets:
 - Extract all key information (ticket ID, summary, status, priority, assignee, reporter, dates)
-- Read ALL comments thoroughly - they often contain critical context
-- Identify related tickets and dependencies
+- **CRITICAL:** Read ALL comments thoroughly - they often contain critical context, decisions, and root cause explanations
+- **CRITICAL:** For the main ticket's linked tickets (issuelinks), you will only see basic info (key, type, summary, status)
+- **CRITICAL:** If linked tickets are provided via --linked parameter, you will get FULL data including all comments - analyze these deeply
+- Identify related tickets and dependencies - explain HOW each relates to the main issue
 - Note acceptance criteria if provided
-- Understand the business context and user impact
+- Understand the business context and user impact from discussions in comments
+- Look for key stakeholder comments that explain requirements or decisions
+
+### When Analyzing Linked Tickets:
+- **CRITICAL:** Don't just list linked tickets - analyze their relationship to the main issue
+- For tickets marked "caused by" - explain what was implemented and why it caused the current issue
+- For tickets marked "blocks" or "is blocked by" - explain the dependency and research findings
+- For tickets marked "relates to" - explain the broader context and how they connect
+- **Read ALL comments in linked tickets** - they often contain crucial context about why issues occurred
+- Look for quotes or key insights from team discussions that informed the solution
+- Identify patterns or precedents (e.g., "this already works for Contis cards, should work the same way")
 
 ### When Analyzing Merge Requests:
 - Count files modified/added/deleted
 - Identify key code changes and their purpose
-- Note important discussions in code review comments
+- **CRITICAL:** Note important discussions in code review comments - these explain decisions and alternatives considered
 - Extract algorithm logic and implementation details
-- Identify any test files included
+- Identify any test files included and what they test
 - Note any migrations or database changes
+- Look for code review feedback that highlights concerns or suggests improvements
+- Pay attention to automated code analysis results if present
 
 ### When Analyzing Confluence Documentation:
-- Extract relevant specifications
-- Note any design decisions
+- Extract relevant specifications and technical requirements
+- Note any design decisions and the reasoning behind them
 - Identify related systems or components
 - Extract business rules or requirements
+- **CRITICAL:** Read ALL comments on Confluence pages - they contain clarifications, updates, and team discussions
+- Look for decision rationales and alternatives that were considered
+- Identify any gaps between documentation and actual implementation
 
 ### Test Idea Generation:
 Generate 15-20 test ideas organized by category:
@@ -835,6 +852,25 @@ Each test case must include:
 - Numbered test steps
 - Expected results
 - Acceptance criteria
+
+### Linked Ticket Deep Analysis (Required Section in Report):
+In the Root Cause Analysis section, create separate subsections for each major linked ticket analyzing:
+- **What the linked ticket implemented or researched** (summary of the work done)
+- **Key findings from comments** (quote important discussions and decisions)
+- **How it relates to the main issue** (cause-and-effect, research findings, broader context)
+- **Critical insights that informed the solution** (precedents, business rules discovered, technical decisions)
+
+Example structure:
+```
+<div class="test-category">
+    <h4>4. How CARDS-3136 Caused This Issue</h4>
+    <p><strong>Original Requirement:</strong> [What was supposed to be built]</p>
+    <p><strong>What Was Implemented:</strong> [What actually got built]</p>
+    <p><strong>What Was Missing:</strong> [The gap that caused the issue]</p>
+    <blockquote>[Key quote from comments explaining the issue]</blockquote>
+    <p><strong>The Gap:</strong> [Detailed explanation]</p>
+</div>
+```
 
 ### Focus Areas:
 Identify 5-7 critical focus areas that need special attention during testing. For each:
