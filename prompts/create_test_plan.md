@@ -1,6 +1,6 @@
-# Generate Comprehensive QA Test Plan
+# Generate QA Test Plan (Paysera Template)
 
-I need you to create a comprehensive test plan for a JIRA Epic using the qa-analysis-claude project.
+I need you to create a test plan for a JIRA Epic following the Paysera test plan template format.
 
 ## Input Information
 
@@ -46,104 +46,172 @@ Read the generated HTML file from `ticket_analysis/` folder to understand:
 - Regulatory or compliance requirements
 - Key stakeholders involved
 
-### Step 3: Create Test Plan
-Generate a comprehensive test plan document in **Markdown format first**, then convert to **HTML**.
+### Step 3: Create Test Plan Markdown
+Generate a test plan document in **Markdown format** following the Paysera template structure below.
 
 ---
 
-## Test Plan Structure
+## Test Plan Structure (Paysera Template)
 
-The test plan must include all of the following sections:
+The test plan must follow this exact structure:
 
-### 1. Introduction
-- **1.1 Purpose** - Why this test plan exists
-- **1.2 Scope Summary** - High-level overview of what will be tested
-- **1.3 Related Tickets** - Links to Epic, user stories, bugs, support tickets
-- **1.4 Documentation References** - Links to requirements, specs, confluence pages
+### Header Section
+```markdown
+# Test Plan: [Feature/Epic Name]
 
-### 2. Test Strategy
-- **2.1 Testing Approach** - Risk-based, exploratory, regression, compliance
-- **2.2 Test Levels** - Unit, Integration, System, UAT (with specific details for each)
+**Epic:** [CORE-XXXX](jira_link)
+**Date:** [Date]
+**Version:** [Version number]
+```
 
-### 3. Test Scope
-- **3.1 In Scope** - Detailed functional and non-functional areas to be tested
-  - 3.1.1 Functional Areas (break down into sub-features)
-  - 3.1.2 Non-Functional Areas (performance, security, compliance)
-- **3.2 Out of Scope** - Explicitly list what will NOT be tested and why
-
-### 4. Testing Focus Areas (Critical)
-Identify 5-7 critical areas requiring special attention. For each:
-- Priority level (CRITICAL/HIGH/MEDIUM)
-- Why it's critical (business/technical/regulatory impact)
-- Specific test focus points
-- Risk if not properly tested
-
-### 5. Test Environments
-- **5.1 Environment Setup** - Dev, Staging, Production
-- **5.2 Test Data Requirements** - Types of data needed
-- **5.3 Environment Configuration** - Special configurations
-
-### 6. Entry and Exit Criteria
-- **6.1 Entry Criteria** - Checklist of prerequisites before testing starts
-- **6.2 Exit Criteria** - Checklist for test completion and sign-off
-
-### 7. Test Deliverables
-- **7.1 Before Testing** - Test plan, test cases, scripts, environment docs
-- **7.2 During Testing** - Daily reports, defect reports, metrics
-- **7.3 After Testing** - Final reports, metrics, UAT sign-off, lessons learned
-
-### 8. Resource Requirements
-- **8.1 Human Resources** - Roles, counts, responsibilities
-- **8.2 Tools and Infrastructure** - Testing tools, access requirements
-
-### 9. Risks and Mitigation
-- Table format with: Risk | Impact | Probability | Mitigation Strategy
-- Include contingency plans for high-impact risks
-
-### 10. Test Schedule
-- **10.1 Timeline Overview** - Table with phases, durations, dates, owners
-- **10.2 Key Milestones** - Important dates and checkpoints
-
-### 11. Communication Plan
-- **11.1 Status Reporting** - Daily, weekly, ad-hoc reporting
-- **11.2 Stakeholders** - Names, roles, contact info
-- **11.3 Escalation Path** - Chain of escalation for issues
-
-### 12. Acceptance Criteria
-Define when the feature is considered ready for production:
-- Regulatory compliance checkpoints
-- Functional completeness criteria
-- Quality metrics (defect rates, pass rates, coverage)
-- Performance benchmarks
-- Required sign-offs
-
-### 13. Assumptions and Dependencies
-- **13.1 Assumptions** - What we're assuming to be true
-- **13.2 Dependencies** - External blockers or prerequisites
-
-### 14. Approvals
-Signature table for:
-- QA Lead
+### 1. Stakeholders
+List all key stakeholders with names and email addresses:
 - Product Owner
-- Development Lead
+- Business Analyst
 - Legal/Compliance (if applicable)
+- Development Lead
+- QA Lead
 
-### Appendices
-- **Appendix A**: Key regulatory/legal requirements (if applicable)
-- **Appendix B**: Test coverage summary (number of scenarios per area)
+### 2. Testing Objectives
+High-level testing goals in bullet format with brief descriptions (5-7 objectives):
+- **[Objective Name]** - Brief description of what will be validated
+- Example: **Financial Accuracy** - Interest calculations are correct for daily balance tracking, tiered rates, compound interest
+
+### 3. Types of Testing
+List testing types that will be performed (4-6 types):
+- **Functional** - Brief description
+- **Integration** - Brief description
+- **Regression** - Brief description
+- **Compliance** - Brief description (if applicable)
+
+### 4. Testing Start Criteria
+Checklist of prerequisites before testing can begin:
+- Development completion requirements
+- Environment readiness
+- Test data availability
+- Documentation approval
+- Code coverage requirements
+
+### 5. Testing Completion Criteria
+Measurable exit criteria with specific percentages and requirements:
+- 100% of critical test cases executed
+- 100% of high-priority test cases executed
+- ≥95% of medium-priority test cases executed
+- ≥80% of low-priority test cases executed
+- ≥95% overall test pass rate achieved
+- Defect resolution requirements
+- Sign-off requirements
+
+### 6. Resource Description
+
+**Personnel:**
+- List roles needed with brief responsibilities
+
+**Software:**
+- List tools needed with purpose (Jira, TestRail, DBeaver, Postman, browsers, etc.)
+
+### 7. Test Scenarios
+
+**Critical Test Areas** organized by priority:
+
+**1. [Area Name] (Priority: CRITICAL)**
+- Bullet list of specific test scenarios
+- Focus on what will be tested
+
+**2. [Area Name] (Priority: CRITICAL)**
+- Bullet list of specific test scenarios
+
+**3. [Area Name] (Priority: HIGH)**
+- Bullet list of specific test scenarios
+
+**4. [Area Name] (Priority: HIGH)**
+- Bullet list of specific test scenarios
+
+**5. [Area Name] (Priority: MEDIUM)**
+- Bullet list of specific test scenarios
+
+**6. [Area Name] (Priority: MEDIUM)**
+- Bullet list of specific test scenarios
+
+**Test Data Requirements:**
+- Specific data needs (account types, currencies, edge cases)
+
+### 8. Risk & Mitigation
+
+**Critical Risks:**
+
+Table format:
+| Risk | Impact | Mitigation Strategy |
+|------|--------|---------------------|
+| [Risk name] | CRITICAL/HIGH/MEDIUM | [Strategy] |
+
+**Contingency Plans:**
+- Bullet list of contingency plans for major risks
+
+### 9. Defect Tracking & Risk Classes
+
+**Defect Severity Classification:**
+- **Critical:** [Examples]
+- **High:** [Examples]
+- **Medium:** [Examples]
+- **Low:** [Examples]
+
+**Risk Classes:**
+- **P0 (Blocker):** [When to use] - must be fixed before release
+- **P1 (Critical):** [When to use] - must be fixed before release
+- **P2 (High):** [When to use] - should be fixed or documented
+- **P3 (Medium/Low):** [When to use] - can be deferred
+
+### 10. Testing on Different Platforms
+
+**Mandatory platform testing required for:**
+- List specific platforms needed (Internet Banking, Mobile Banking, API, etc.)
+
+**Platforms:**
+- Desktop browsers: [List with versions]
+- Mobile: [List OS versions]
+- API: [Environment details]
+
+### 11. Quality Criteria
+
+Testing quality benchmarks with specific measurable targets:
+- **Functional coverage:** ≥X% of planned test scenarios executed
+- **Critical/High priority:** 100% test execution
+- **[Domain-specific metrics]:** Specific pass rate or criteria
+- **Performance:** Specific benchmarks
+- **Defect metrics:** Zero critical/high severity defects open at release
+- **UAT approval:** Required sign-offs
+
+### 12. Related Documentation
+
+Bullet list with links:
+- Business Requirements: [Link]
+- Technical Specifications: [Link]
+- Regulatory Context: [Link] (if applicable)
+- Related Tickets: [Links to all related tickets]
+
+### Footer
+```markdown
+---
+
+**Document Control:**
+- Version: [Version]
+- Last Updated: [Date]
+- Prepared by: QA Team
+```
 
 ---
 
 ## Document Characteristics
 
 The test plan should be:
-- **Comprehensive but concise**: Include all sections, but keep descriptions focused
-- **Slightly longer than a template**: Add real context and details, not just placeholders
-- **Actionable**: Provide specific, testable criteria and concrete dates
-- **Risk-focused**: Emphasize critical areas based on business/regulatory/technical impact
-- **Professional**: Use proper formatting, tables, and clear language
+- **Concise and focused**: Keep it short (200-250 lines max)
+- **Specific to the Epic**: Include real context from the tickets, not generic placeholders
+- **Priority-driven**: Organize test scenarios by priority (CRITICAL → HIGH → MEDIUM)
+- **Measurable**: Use specific percentages, numbers, and benchmarks
+- **Professional**: Use proper markdown formatting and tables
 
-**Length guideline**: Aim for 10-15 pages when printed, with substantive content in each section.
+**Length guideline**: Aim for approximately 200-250 lines, similar to a 5-7 page printed document.
 
 ---
 
@@ -156,7 +224,7 @@ ticket_analysis/{EPIC-ID}_Test_Plan.md
 ```
 
 ### Step 5: Convert to HTML
-Convert the markdown test plan to a beautiful, responsive HTML document using this template structure:
+Convert the markdown test plan to a beautiful, responsive HTML document.
 
 **HTML Requirements:**
 - **Responsive Design**: Works on desktop, tablet, mobile
@@ -169,7 +237,7 @@ Convert the markdown test plan to a beautiful, responsive HTML document using th
   - Info boxes: Blue
 - **Interactive Elements**: Smooth scrolling, hover effects
 - **Print-Friendly**: Can be printed as professional document
-- **Professional Tables**: For schedules, risks, resources, approvals
+- **Professional Tables**: For schedules, risks, resources
 
 **HTML Color Scheme:**
 - Primary: #3498db (blue)
@@ -180,17 +248,18 @@ Convert the markdown test plan to a beautiful, responsive HTML document using th
 - Purple: #9b59b6 (purple for special sections)
 
 **Key HTML Components:**
-- Sidebar TOC with nested items
+- Sidebar TOC with nested items matching the 12 sections
 - Header with gradient background and metadata
-- Section headers with emojis (📋, 🎯, 🔍, ⚠️, etc.)
+- Section headers with emojis (📋 Stakeholders, 🎯 Testing Objectives, 🔍 Test Scenarios, ⚠️ Risk & Mitigation, etc.)
 - Info cards for important callouts
 - Focus area boxes for critical testing areas
-- Metrics cards for test coverage summary
-- Tables for schedules, risks, resources
+- Metrics cards for quality criteria
+- Tables for risks, resources, platforms
 - Checklist styling for entry/exit criteria
-- Status badges (In Scope, Out of Scope, Priority levels)
-- Signature table for approvals
+- Status badges (CRITICAL, HIGH, MEDIUM priority levels)
 - Footer with document control info
+
+Use the HTML format from: `.claude/qa-analysis.md` template as a reference for styling.
 
 Save the HTML version as:
 ```
@@ -216,7 +285,7 @@ I need you to create a test plan for:
 
 **Documentation URLs:**
 - Business Requirements: https://intranet.paysera.net/pages/viewpage.action?pageId=341607676
-- Technical Specifications: https://intranet.paysera.net/display/NOVA/SUPPORT+103066+...
+- Technical Specifications: https://intranet.paysera.net/display/PDOC/Accruals.+Solution+Proposal
 - Research: https://intranet.paysera.net/pages/viewpage.action?pageId=339771619
 
 In the end, convert the final test plan into an HTML file!
@@ -227,50 +296,38 @@ In the end, convert the final test plan into an HTML file!
 ## Quality Checklist
 
 Before finalizing, verify:
-- [ ] All 14 main sections are included
-- [ ] Each section has substantive content (not just placeholders)
-- [ ] Critical testing focus areas are identified with clear justification
-- [ ] Risks are realistic and mitigation strategies are practical
-- [ ] Timeline is realistic with proper phase overlap
-- [ ] Stakeholders are identified with contact info
-- [ ] Acceptance criteria are specific and measurable
-- [ ] HTML formatting is professional and responsive
+- [ ] All 12 main sections are included in order
+- [ ] Stakeholders section has real names and emails from Jira
+- [ ] Testing Objectives are high-level and focused (5-7 bullets)
+- [ ] Test Scenarios are organized by priority (CRITICAL, HIGH, MEDIUM)
+- [ ] Exit criteria include specific measurable percentages
+- [ ] Risk table uses standard format with Impact and Mitigation columns
+- [ ] Quality Criteria has specific numeric benchmarks
+- [ ] Document follows Paysera template format exactly
+- [ ] Total length is approximately 200-250 lines
 - [ ] Both .md and .html files are generated
-- [ ] Document metadata is complete (version, date, approvals)
+- [ ] HTML formatting is professional and responsive
 
 ---
 
 ## Notes
 
+- **Follow Paysera template exactly** - Do not add extra sections from IEEE 829 or other standards
+- **Keep it concise** - The template is intentionally shorter than comprehensive test plan standards
 - **Do NOT create test cases** - This is a test plan, not test case documentation
-- **Focus on strategy and approach** - Not detailed step-by-step test execution
-- **Include regulatory/compliance sections** - If the feature has legal requirements
-- **Be specific with metrics** - Use actual numbers (e.g., ">80% coverage", "<5 min execution time")
+- **Focus on priorities** - Emphasize CRITICAL and HIGH priority areas
+- **Be specific with metrics** - Use actual numbers (e.g., "≥95% coverage", "<5 min execution time")
 - **Reference real stakeholders** - Use names from Jira comments/tickets
-- **Realistic timelines** - Base durations on similar past projects
+- **Use standard Paysera sections** - Stakeholders, Testing Objectives, Types of Testing, etc.
+- **HTML is required** - Always generate both markdown and HTML versions
 
 ---
 
-## Template Style Reference
-
-For HTML styling, use a similar approach to the QA Analysis Report template found in:
-`.claude/qa-analysis.md`
-
-Key differences from QA Analysis Report:
-- Test Plan focuses on **planning and strategy** (future-looking)
-- QA Analysis focuses on **completed work analysis** (retrospective)
-- Test Plan has **schedule, resources, and approvals**
-- QA Analysis has **test cases generated and root cause analysis**
-
-Both should maintain:
-- Professional design with sidebar TOC
-- Responsive layout
-- Color-coded sections
-- Clear typography
-- Print-friendly styling
+**Template Reference:**
+See https://intranet.paysera.net/pages/viewpage.action?pageId=335939249 for the official Paysera test plan template.
 
 ---
 
 **Generated by:** qa-analysis-claude
-**Template Version:** 1.0
-**Last Updated:** February 5, 2026
+**Template Version:** 2.0 (Paysera Format)
+**Last Updated:** February 6, 2026
